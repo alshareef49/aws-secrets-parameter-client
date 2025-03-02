@@ -50,8 +50,7 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
                 .filter(entry -> entry.getKey().startsWith(AwsConfigConstants.AWS_PARAMETER_STORE_SECRET_NAME_PREFIX))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        Map<String, Object> awsProps = new HashMap<>();
-        awsProps.putAll(configureAwsParameterStoreProps(parameterStoreSecretNames, parameterStoreProperties));
+        Map<String, Object> awsProps = new HashMap<>(configureAwsParameterStoreProps(parameterStoreSecretNames, parameterStoreProperties));
         log.info("ParameterStore AWS Properties:{}", awsProps);
 
         for (Map.Entry<String, Object> secretsEntry : secretsManagerProperties.entrySet()) {
@@ -91,14 +90,14 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
     public Map<String, Object> configureAwsParameterStoreProps(Map<String, Object> parameterStoreSecretName, Map<String, Object> parameterStoreProps) {
         Map<String, Object> awsProps = new HashMap<>();
         try {
-            for (Map.Entry<String, Object> entry : parameterStoreProps.entrySet()) {
+            for (Map.Entry<String, Object> entry : parameterStoreSecretName.entrySet()) {
                 // Get ParameterStore Values form AWS
-                JsonNode parameterStoreValues = ParameterStore.getParameterStoreValue(entry.getKey());
+                JsonNode parameterStoreValues = ParameterStore.getParameterStoreValue(entry.getValue().toString());
                 // Map parameter store values to properties file key
                 for (String key : parameterStoreProps.keySet()) {
                     JsonNode prop = parameterStoreValues.get(key.substring(AwsConfigConstants.AWS_PARAMETER_STORE_PREFIX.length()));
                     if (prop != null) {
-                        log.debug("AwsConfigEnvironmentPostProcessor:: Overwriting application property value " + key + " : " + prop.asText());
+                        log.debug("AwsConfigEnvironmentPostProcessor:: Overwriting application property value {} : {}", key, prop.asText());
                         awsProps.put(key, prop.asText());
                     }
                 }
@@ -136,7 +135,7 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
                         String computedKey = key.substring(prefix.length() + 1);
                         String value = secretManagerValues.get(computedKey).asText();
                         if (value != null) {
-                            log.debug("AwsConfigEnvironmentPostProcessor:: Overwriting applications property value " + key + " : " + value);
+                            log.debug("AwsConfigEnvironmentPostProcessor:: Overwriting applications property value {} : {}", key, value);
                         }
                         awsprops.put(key, value);
                     }
