@@ -22,7 +22,7 @@ Add the following dependency to your project's `pom.xml`:
 <dependency>
     <groupId>com.aws.config</groupId>
     <artifactId>aws-to-application.properties</artifactId>
-    <version>0.0.1</version>
+    <version>${version}</version>
     <scope>compile</scope>
 </dependency>
 ```
