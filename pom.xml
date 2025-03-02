@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.aws.config</groupId>
-    <artifactId>awsproperties</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>aws-to-application.properties</artifactId>
+    <version>0.0.1</version>
     <name>secrets-parameter-client</name>
     <description>Demo project for Spring Boot</description>
     <properties>
